@@ -64,7 +64,7 @@ class CategoryController extends Controller
     /**
      * カテゴリーを削除
      */
-    public function destory(Category $category)
+    public function destroy(Category $category)
     {
         //カテゴリーに紐づくタスクがある場合は削除不可
         if ($category->tasks()->count() > 0) {
