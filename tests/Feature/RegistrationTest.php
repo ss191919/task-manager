@@ -9,20 +9,21 @@ use Tests\TestCase;
 class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
+
     /** @test */
-    public function 登録画面が表示できる(): void
+    public function 登録画面を表示できる(): void
     {
-        //Act
+        // Act
         $response = $this->get(route('register'));
 
-        //Assert
+        // Assert
         $response->assertStatus(200);
     }
 
     /** @test */
     public function 新規ユーザーを登録できる(): void
     {
-        //Act
+        // Act
         $response = $this->post(route('register'), [
             'name' => 'テストユーザー',
             'email' => 'test@example.com',
@@ -30,7 +31,7 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        //Assert
+        // Assert
         $response->assertRedirect(route('tasks.index'));
         $this->assertDatabaseHas('users', [
             'name' => 'テストユーザー',
@@ -42,7 +43,7 @@ class RegistrationTest extends TestCase
     /** @test */
     public function 名前が空だとバリデーションエラーになる(): void
     {
-        //Act
+        // Act
         $response = $this->post(route('register'), [
             'name' => '',
             'email' => 'test@example.com',
@@ -50,14 +51,14 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        //Assert
+        // Assert
         $response->assertSessionHasErrors('name');
     }
 
     /** @test */
     public function メールアドレスが空だとバリデーションエラーになる(): void
     {
-        //Act
+        // Act
         $response = $this->post(route('register'), [
             'name' => 'テストユーザー',
             'email' => '',
@@ -65,14 +66,14 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        //Assert
+        // Assert
         $response->assertSessionHasErrors('email');
     }
 
     /** @test */
     public function 無効なメールアドレス形式だとバリデーションエラーになる(): void
     {
-        //Act
+        // Act
         $response = $this->post(route('register'), [
             'name' => 'テストユーザー',
             'email' => 'invalid-email',
@@ -80,17 +81,17 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        //Assert
+        // Assert
         $response->assertSessionHasErrors('email');
     }
 
     /** @test */
     public function 既に登録済みのメールアドレスだとバリデーションエラーになる(): void
     {
-        //Arrange
+        // Arrange
         User::factory()->create(['email' => 'existing@example.com']);
 
-        //Act
+        // Act
         $response = $this->post(route('register'), [
             'name' => 'テストユーザー',
             'email' => 'existing@example.com',
@@ -98,14 +99,14 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        //Assert
+        // Assert
         $response->assertSessionHasErrors('email');
     }
 
     /** @test */
     public function パスワードが8文字未満だとバリデーションエラーになる(): void
     {
-        //Act
+        // Act
         $response = $this->post(route('register'), [
             'name' => 'テストユーザー',
             'email' => 'test@example.com',
@@ -113,14 +114,14 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'short',
         ]);
 
-        //Assert
+        // Assert
         $response->assertSessionHasErrors('password');
     }
 
     /** @test */
     public function パスワード確認が一致しないとバリデーションエラーになる(): void
     {
-        //Act
+        // Act
         $response = $this->post(route('register'), [
             'name' => 'テストユーザー',
             'email' => 'test@example.com',
@@ -128,7 +129,7 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'different-password',
         ]);
 
-        //Assert
+        // Assert
         $response->assertSessionHasErrors('password');
     }
 }
